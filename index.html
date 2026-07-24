@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Untukmu 🌻</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgm" src="assets/music/bgm.mp3" loop></audio>
+    <audio id="sfx-pop" src="assets/sounds/pop.mp3"></audio>
+
+    <!-- App Container -->
+    <main id="app">
+        
+        <!-- 1. Loading -->
+        <section id="s-loading" class="screen active">
+            <div class="loader-premium">
+                <div class="sun"></div>
+                <div class="clouds"></div>
+                <p>Memuat kenangan...</p>
+                <div class="progress-bar"><div class="progress"></div></div>
+            </div>
+        </section>
+
+        <!-- 2. Password -->
+        <section id="s-password" class="screen hidden glass-bg">
+            <div class="card glass">
+                <div class="sunflower-icon">🌻</div>
+                <h2>Masukkan Kata Kunci</h2>
+                <input type="password" id="pass-input" placeholder="Ketik di sini...">
+                <button id="btn-login" class="btn-primary">Masuk</button>
+                <p id="pass-error" class="error-text"></p>
+            </div>
+        </section>
+
+        <!-- 3. Opening -->
+        <section id="s-opening" class="screen hidden">
+            <h1 id="typing-opening" class="typing-text"></h1>
+            <button id="btn-start-journey" class="btn-primary mt-4 opacity-0">🌻 Mulai Perjalanan</button>
+        </section>
+
+        <!-- 4 & 5. Gift Box & Explosion -->
+        <section id="s-gift" class="screen hidden">
+            <div class="tap-hint">Sentuh Kadonya</div>
+            <div class="gift-box" id="the-gift">
+                <div class="lid"></div>
+                <div class="box"></div>
+                <div class="ribbon"></div>
+            </div>
+        </section>
+
+        <!-- 6. Main Menu -->
+        <section id="s-menu" class="screen hidden">
+            <div class="menu-grid">
+                <div class="menu-card glass" data-target="s-photo">📸 Kenangan</div>
+                <div class="menu-card glass" data-target="s-letter">💌 Surat</div>
+                <div class="menu-card glass" data-target="s-flower">🌻 Bunga</div>
+                <div class="menu-card glass" data-target="s-birthday">🎂 Happy Birthday</div>
+            </div>
+        </section>
+
+        <!-- 7. Photo (Polaroid) -->
+        <section id="s-photo" class="screen hidden sub-page">
+            <button class="btn-back">⬅ Kembali</button>
+            <div class="gallery-container">
+                <div class="polaroid p-back"><img src="assets/images/photo2.jpg" alt="Photo 2"></div>
+                <div class="polaroid p-front" id="swipe-card"><img src="assets/images/photo1.jpg" alt="Photo 1"></div>
+                <p class="swipe-hint">Geser foto (Swipe) 👆</p>
+            </div>
+        </section>
+
+        <!-- 8. Letter -->
+        <section id="s-letter" class="screen hidden sub-page">
+            <button class="btn-back">⬅ Kembali</button>
+            <div class="envelope" id="the-envelope">
+                <div class="flap"></div>
+                <div class="paper">
+                    <p id="letter-content"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. 3D Flower (SVG Animated) -->
+        <section id="s-flower" class="screen hidden sub-page">
+            <button class="btn-back">⬅ Kembali</button>
+            <div id="flower-container">
+                <!-- SVG Bunga Matahari Animasi -->
+                <svg viewBox="0 0 100 200" class="svg-flower">
+                    <path class="stem" d="M50,200 Q45,150 50,100" />
+                    <path class="leaf leaf-left" d="M50,160 Q30,150 20,130 Q30,170 50,160" />
+                    <path class="leaf leaf-right" d="M50,140 Q70,130 80,110 Q70,150 50,140" />
+                    <g class="bloom">
+                        <!-- Kelopak dibuat via JS (flower.js) agar dinamis -->
+                        <circle cx="50" cy="100" r="12" fill="#5D4037" />
+                    </g>
+                </svg>
+            </div>
+        </section>
+
+        <!-- 10. Happy Birthday -->
+        <section id="s-birthday" class="screen hidden sub-page">
+            <button class="btn-back">⬅ Kembali</button>
+            <div class="bday-content">
+                <h1 class="bday-title text-shadow">Happy Birthday</h1>
+                <div class="countdown glass">
+                    <div class="time"><span id="cd-d">00</span> Hari</div>
+                    <div class="time"><span id="cd-h">00</span> Jam</div>
+                    <div class="time"><span id="cd-m">00</span> Mnt</div>
+                    <div class="time"><span id="cd-s">00</span> Dtk</div>
+                </div>
+                <button id="btn-ending" class="btn-primary mt-4">Pesan Terakhir 💌</button>
+            </div>
+        </section>
+
+        <!-- 11. Ending -->
+        <section id="s-ending" class="screen hidden">
+            <h2 id="ending-text" class="text-shadow text-center px-4"></h2>
+            <button class="btn-primary mt-4" onclick="location.reload()">🌼 Mulai Lagi</button>
+        </section>
+
+    </main>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="config.js"></script>
+    <script src="animations.js"></script>
+    <script src="gift.js"></script>
+    <script src="gallery.js"></script>
+    <script src="letter.js"></script>
+    <script src="flower.js"></script>
+    <script src="birthday.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
