@@ -1,0 +1,105 @@
+:root {
+    --c-sunflower: #FFD700;
+    --c-cream: #FFF8E7;
+    --c-green: #A8E6CF;
+    --c-white: #FFFFFF;
+    --c-text: #5D4037;
+    --font-heading: 'Dancing Script', cursive;
+    --font-body: 'Quicksand', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: linear-gradient(135deg, var(--c-cream), var(--c-white));
+    color: var(--c-text);
+    font-family: var(--font-body);
+    overflow: hidden; /* Mencegah scroll default, kita buat seperti aplikasi */
+    touch-action: none; 
+}
+
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh; /* Adaptasi layar HP (Dynamic Viewport) */
+}
+
+/* UI System */
+.screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 0.5s; /* Sync with GSAP */
+}
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s;
+}
+
+/* Premium Glassmorphism */
+.glass {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); /* Dukungan Safari/iOS */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(93, 64, 55, 0.1);
+}
+
+.btn-primary {
+    background: var(--c-sunflower);
+    color: var(--c-text);
+    border: none;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: var(--font-body);
+}
+.btn-primary:active { transform: scale(0.95); }
+
+/* Komponen Spesifik */
+input[type="password"] {
+    width: 80%; padding: 12px; margin: 15px 0;
+    border: 2px solid var(--c-sunflower);
+    border-radius: 12px; outline: none;
+    text-align: center; font-size: 1rem;
+}
+
+.menu-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px;
+}
+.menu-card {
+    width: 140px; height: 140px;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: 600; font-size: 1.1rem;
+    cursor: pointer; transition: transform 0.3s;
+}
+.menu-card:active { transform: scale(0.9); }
+
+.btn-back {
+    position: absolute; top: 20px; left: 20px;
+    background: none; border: none; font-size: 1.1rem;
+    color: var(--c-text); font-weight: 600; z-index: 100;
+}
+
+/* Typography Premium */
+h1.typing-text { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; padding: 0 20px;}
+.text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+.mt-4 { margin-top: 20px; }
+.px-4 { padding: 0 20px; }
+
+/* Menghindari interaksi yang tidak diinginkan */
+img { pointer-events: none; }
+
