@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Digital Flower Gift — Untuk Kamu</title>
+<meta name="description" content="Sebuah hadiah bunga digital premium, dibuat khusus untukmu.">
+<meta name="theme-color" content="#7a2e42">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Jost:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ ACCESSIBILITY: SKIP LINK ============ -->
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<!-- ============ CANVAS LAYERS (particles / petals / fireflies) ============ -->
+<canvas id="petals-canvas" aria-hidden="true"></canvas>
+<canvas id="fireflies-canvas" aria-hidden="true"></canvas>
+
+<!-- ============ CURSOR GLOW (desktop only) ============ -->
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+<!-- ============ RIPPLE + HEARTS CONTAINER ============ -->
+<div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+
+<!-- =========================================================
+     1. LOADING SCREEN
+========================================================== -->
+<section id="loadingScreen" class="loading-screen" role="status" aria-live="polite" aria-label="Memuat">
+  <div class="loading-flower" aria-hidden="true">
+    <svg viewBox="0 0 200 200" class="bloom-svg">
+      <g class="petal-group">
+        <ellipse class="petal p1" cx="100" cy="60" rx="24" ry="42"/>
+        <ellipse class="petal p2" cx="100" cy="60" rx="24" ry="42"/>
+        <ellipse class="petal p3" cx="100" cy="60" rx="24" ry="42"/>
+        <ellipse class="petal p4" cx="100" cy="60" rx="24" ry="42"/>
+        <ellipse class="petal p5" cx="100" cy="60" rx="24" ry="42"/>
+        <ellipse class="petal p6" cx="100" cy="60" rx="24" ry="42"/>
+      </g>
+      <circle class="flower-center" cx="100" cy="100" r="14"/>
+    </svg>
+  </div>
+  <p class="loading-label">Menyiapkan sesuatu yang indah untukmu</p>
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="progress-percent" id="progressPercent">0%</span>
+</section>
+
+<!-- =========================================================
+     2. PASSWORD SCREEN
+========================================================== -->
+<section id="passwordScreen" class="password-screen" aria-label="Halaman kata sandi" hidden>
+  <div class="password-card glass-card">
+    <div class="lock-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="4" y="10" width="16" height="10" rx="2"/>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+      </svg>
+    </div>
+    <h1 class="password-title">Hadiah Ini Untukmu</h1>
+    <p class="password-sub">Masukkan kata sandi rahasia untuk membukanya</p>
+
+    <form id="passwordForm" class="password-form" autocomplete="off">
+      <label for="passwordInput" class="visually-hidden">Kata sandi</label>
+      <input
+        type="password"
+        id="passwordInput"
+        class="password-input"
+        placeholder="Kata sandi..."
+        aria-describedby="passwordError"
+        autocomplete="off"
+        inputmode="text"
+      >
+      <button type="submit" class="btn-enter" aria-label="Buka hadiah">
+        <span>Buka</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+    <p id="passwordError" class="password-error" role="alert" aria-live="assertive"></p>
+    <p class="password-hint">Petunjuk: tanggal spesial kita ✨</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================== -->
+<div id="main-content" class="site-wrapper" hidden>
+
+  <!-- Music Player (fixed) -->
+  <div class="music-player glass-card" id="musicPlayer" role="region" aria-label="Pemutar musik">
+    <button id="musicToggle" class="music-toggle" aria-label="Putar musik">
+      <svg class="icon-play" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+    </button>
+    <div class="music-info">
+      <span class="music-title">Melodi Cinta Kita</span>
+      <div class="music-progress-track" id="musicProgressTrack" tabindex="0" role="slider" aria-label="Progres musik" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="music-progress-fill" id="musicProgressFill"></div>
+      </div>
+    </div>
+    <button id="volumeToggle" class="volume-toggle" aria-label="Volume">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+    </button>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="Atur volume">
+    <audio id="bgMusic" loop preload="none">
+      <source src="assets/music/song.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- Nav dots -->
+  <nav class="nav-dots" aria-label="Navigasi halaman">
+    <a href="#hero" class="nav-dot active" data-label="Beranda" aria-label="Ke Beranda"></a>
+    <a href="#bouquet" class="nav-dot" data-label="Buket" aria-label="Ke Buket 3D"></a>
+    <a href="#gallery" class="nav-dot" data-label="Galeri" aria-label="Ke Galeri Foto"></a>
+    <a href="#letter" class="nav-dot" data-label="Surat" aria-label="Ke Surat Cinta"></a>
+    <a href="#countdown" class="nav-dot" data-label="Momen" aria-label="Ke Hitung Mundur"></a>
+  </nav>
+
+  <!-- =========================================================
+       3. HERO SECTION
+  ========================================================== -->
+  <header id="hero" class="hero">
+    <canvas id="particles-canvas" class="particles-canvas" aria-hidden="true"></canvas>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-content">
+      <p class="eyebrow">Sebuah persembahan digital</p>
+      <h1 class="hero-title">
+        <span class="hero-title-line">Setangkai Bunga,</span>
+        <span class="hero-title-line accent-script">Sejuta Rasa</span>
+      </h1>
+      <p class="hero-desc">Dirangkai dengan detail, dikirim dengan hati. Gulir ke bawah dan temukan buket yang kubuat khusus untukmu.</p>
+      <a href="#bouquet" class="btn-primary">
+        <span>Buka Buketnya</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">
+      <span></span>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       5. INTERACTIVE 3D BOUQUET
+  ========================================================== -->
+  <section id="bouquet" class="bouquet-section">
+    <div class="section-heading">
+      <p class="eyebrow">Sentuh &amp; putar</p>
+      <h2 class="section-title">Buket Interaktif</h2>
+      <p class="section-sub">Seret untuk memutar, cubit atau scroll untuk zoom, sentuh untuk membuatnya bergoyang.</p>
+    </div>
+    <div class="bouquet-stage glass-card" id="bouquetStage">
+      <canvas id="bouquetCanvas" aria-label="Model 3D buket bunga interaktif" role="img"></canvas>
+      <div class="bouquet-loader" id="bouquetLoader">
+        <div class="mini-spinner"></div>
+      </div>
+      <div class="bouquet-hint">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M2 12l3 3 4-4"/></svg>
+        Tarik untuk memutar
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       9. PHOTO GALLERY
+  ========================================================== -->
+  <section id="gallery" class="gallery-section">
+    <div class="section-heading">
+      <p class="eyebrow">Kenangan kita</p>
+      <h2 class="section-title">Galeri Foto</h2>
+      <p class="section-sub">Setiap gambar menyimpan sepotong cerita.</p>
+    </div>
+
+    <div class="gallery-slider glass-card" id="gallerySlider">
+      <div class="gallery-track" id="galleryTrack">
+        <figure class="gallery-slide active" data-index="0">
+          <img src="assets/images/photo1.jpg" alt="Kenangan pertama kita" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1200&auto=format&fit=crop'">
+        </figure>
+        <figure class="gallery-slide" data-index="1">
+          <img src="assets/images/photo2.jpg" alt="Momen bahagia bersama" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200&auto=format&fit=crop'">
+        </figure>
+        <figure class="gallery-slide" data-index="2">
+          <img src="assets/images/photo3.jpg" alt="Perjalanan indah kita" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1487530811176-3780de880c2d?q=80&w=1200&auto=format&fit=crop'">
+        </figure>
+        <figure class="gallery-slide" data-index="3">
+          <img src="assets/images/photo4.jpg" alt="Senyuman favoritku" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1200&auto=format&fit=crop'">
+        </figure>
+      </div>
+
+      <button class="gallery-nav prev" id="galleryPrev" aria-label="Foto sebelumnya">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="gallery-nav next" id="galleryNext" aria-label="Foto berikutnya">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+
+      <div class="gallery-dots" id="galleryDots" role="tablist" aria-label="Pilih foto"></div>
+    </div>
+
+    <p class="gallery-zoom-tip">Ketuk foto untuk memperbesar</p>
+  </section>
+
+  <!-- Lightbox for zoom -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Tampilan foto diperbesar">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Tutup tampilan foto">&times;</button>
+    <img src="" alt="" id="lightboxImg">
+  </div>
+
+  <!-- =========================================================
+       6. LOVE LETTER
+  ========================================================== -->
+  <section id="letter" class="letter-section">
+    <div class="section-heading">
+      <p class="eyebrow">Untuk kamu, dari aku</p>
+      <h2 class="section-title">Surat Cinta</h2>
+    </div>
+
+    <button class="btn-primary btn-letter" id="openLetterBtn" aria-expanded="false" aria-controls="letterPaper">
+      <span>Buka Suratnya</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
+    </button>
+
+    <div class="letter-paper glass-card" id="letterPaper" hidden>
+      <div class="letter-scroll" id="letterScroll">
+        <p class="letter-salutation">Untuk kamu yang paling istimewa,</p>
+        <p class="letter-text" id="letterText"></p>
+        <span class="typing-cursor" id="typingCursor" aria-hidden="true">|</span>
+      </div>
+      <p class="letter-signature">Dengan cinta, <span>Aku</span> 🌷</p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       7. COUNTDOWN TIMER
+  ========================================================== -->
+  <section id="countdown" class="countdown-section">
+    <div class="section-heading">
+      <p class="eyebrow">Menanti bersama</p>
+      <h2 class="section-title">Menuju Momen Spesial Kita</h2>
+      <p class="section-sub" id="countdownDateLabel"></p>
+    </div>
+
+    <div class="flip-clock" id="flipClock" aria-live="off">
+      <div class="flip-unit">
+        <div class="flip-card-wrap" data-unit="days">
+          <div class="flip-card">
+            <div class="flip-card-face flip-top"><span>00</span></div>
+            <div class="flip-card-face flip-bottom"><span>00</span></div>
+          </div>
+        </div>
+        <span class="flip-label">Hari</span>
+      </div>
+      <div class="flip-unit">
+        <div class="flip-card-wrap" data-unit="hours">
+          <div class="flip-card">
+            <div class="flip-card-face flip-top"><span>00</span></div>
+            <div class="flip-card-face flip-bottom"><span>00</span></div>
+          </div>
+        </div>
+        <span class="flip-label">Jam</span>
+      </div>
+      <div class="flip-unit">
+        <div class="flip-card-wrap" data-unit="minutes">
+          <div class="flip-card">
+            <div class="flip-card-face flip-top"><span>00</span></div>
+            <div class="flip-card-face flip-bottom"><span>00</span></div>
+          </div>
+        </div>
+        <span class="flip-label">Menit</span>
+      </div>
+      <div class="flip-unit">
+        <div class="flip-card-wrap" data-unit="seconds">
+          <div class="flip-card">
+            <div class="flip-card-face flip-top"><span>00</span></div>
+            <div class="flip-card-face flip-bottom"><span>00</span></div>
+          </div>
+        </div>
+        <span class="flip-label">Detik</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>Dibuat dengan <span aria-hidden="true">🤍</span><span class="visually-hidden">cinta</span> — Digital Flower Gift Premium</p>
+  </footer>
+
+</div><!-- /site-wrapper -->
+
+<!-- ============ THREE.JS (CDN) ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
